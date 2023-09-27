@@ -11,26 +11,71 @@
     <input type="submit" value='ホームに戻る!'>
   </form>
 
-  <form  method="get">
-    <input type="submit" value='スタート!'>
+  <form id="timer-form" method="get">
+    <label for="minutes">分:</label>
+    <input type="number" id="minutes" name="minutes" min="0" max="60" value="0">
+    <label for="seconds">秒:</label>
+    <input type="number" id="seconds" name="seconds" min="0" max="59" value="10">
+    <input type="button" id="start-button" value='スタート!'>
   </form>
-
-
+  
+  
   <h2>音声を再生する</h2>
 
-  <button type="button" id="play-audio">音声再生</button>
-
+  <audio id="audio-element" src="/static/audio/SiriPower.mp3"></audio>
+  
   <script>
-  // audio要素を取得する
-  const audio = document.querySelector("#play-audio");
-
-  // ボタンを押した時の処理
-  audio.addEventListener("click", () => {
-    // 音声ファイルを読み込む
-    const audioElement = new Audio("/static/audio/SiriPower.mp3");
-    // 音声を再生する
-    audioElement.play();
+  // タイマーの表示要素を取得する
+  const timer = document.querySelector("#timer-form");
+  
+  // スタートボタンを取得する
+  const startButton = document.querySelector("#start-button");
+  
+  // 音声要素を取得する
+  const audioElement = document.querySelector("#audio-element");
+  
+  // スタートボタンを押した時の処理
+  startButton.addEventListener("click", () => {
+    // スピンボックスから分と秒を取得する
+    const minutes = parseInt(document.querySelector("#minutes").value);
+    const seconds = parseInt(document.querySelector("#seconds").value);
+    
+    // 分と秒を秒数に変換する
+    let totalSeconds = minutes * 60 + seconds;
+    
+    // カウントダウン関数を定義する
+    function countdown() {
+      // 秒数から分と秒に戻す
+      let minutes = Math.floor(totalSeconds / 60);
+      let seconds = totalSeconds % 60;
+      
+      // 分と秒を2桁に揃える
+      minutes = minutes.toString().padStart(2, "0");
+      seconds = seconds.toString().padStart(2, "0");
+      
+      // タイマーの表示を更新する
+      timer.innerHTML = `<p>${minutes}:${seconds}</p>`;
+      
+      // 秒数を減らす
+      totalSeconds--;
+      
+      // 秒数が0以下になったら
+      if (totalSeconds < 0) {
+        // カウントダウンを停止する
+        clearInterval(intervalId);
+        // 音声ファイルを再生する
+        audioElement.play();
+      }
+    }
+    
+    // カウントダウン関数を1秒ごとに実行する
+    const intervalId = setInterval(countdown, 1000);
+    
+    // スタートボタンを無効化する
+    startButton.disabled = true;
+    
   });
+  
   </script>
 
 {% endblock %}
