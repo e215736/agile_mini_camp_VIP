@@ -15,4 +15,22 @@
     <input type="submit" value='スタート!'>
   </form>
 
+
+  <h2>音声を再生する</h2>
+
+  <button type="button" id="play-audio">音声再生</button>
+
+  <script>
+  // audio要素を取得する
+  const audio = document.querySelector("#play-audio");
+
+  // ボタンを押した時の処理
+  audio.addEventListener("click", () => {
+    // 音声ファイルを読み込む
+    const audioElement = new Audio("/static/audio/SiriPower.mp3");
+    // 音声を再生する
+    audioElement.play();
+  });
+  </script>
+
 {% endblock %}
