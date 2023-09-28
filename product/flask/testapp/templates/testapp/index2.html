@@ -17,11 +17,24 @@
       font-size: 36px;
       text-align: center;
     }
+
+    /* スタイルを追加：ポップアップ */
+    #popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+    }
 </style>
   
-<form action="/" method="get">
-    <a href="/" class="btn btn-flat" role="button"><span>ホームに戻る!</span></a>
-</form>
+
 
 <form id="timer-form" method="get">
     <label for="minutes" style="font-size: 24px;">設定時間:</label>
@@ -35,12 +48,29 @@
 </form>
 
 <audio id="audio-element" src="/static/audio/{{ audio_file }}"></audio>
+
+
 <div id="timer-display"></div>
+
+<form action="/" method="get">
+    <a href="/" class="btn btn-flat" role="button"><span>ホームに戻る!</span></a>
+</form>
+
+
+
+<!-- ポップアップ要素 -->
+<div id="popup">
+  <h2>タイマー終了！</h2>
+  <p>おめでとうございます！タイマーが終了しました。ハッ(笑顔)</p>
+  <button onclick="closePopup()">閉じる</button>
+</div>
 
 <script>
     const timerDisplay = document.getElementById("timer-display");
     const startButton = document.getElementById("start-button");
     const audioElement = document.getElementById("audio-element");
+    const popup = document.getElementById("popup"); // ポップアップ要素
+
     let intervalId; // Variable to hold the interval ID
 
     startButton.addEventListener("click", () => {
@@ -67,6 +97,9 @@
                 audioElement.play();
                 startButton.disabled = false; // Re-enable the start button
                 resetTimerDisplay(); // Reset the timer display and input fields
+
+                // カウントダウン終了後、ポップアップを表示
+                displayPopup();
             }
         }
 
@@ -78,6 +111,14 @@
         document.getElementById("minutes").value = "0";
         document.getElementById("seconds").value = "10";
         timerDisplay.innerHTML = "";
+    }
+
+    function displayPopup() {
+        popup.style.display = "block"; // ポップアップを表示
+    }
+
+    function closePopup() {
+        popup.style.display = "none"; // ポップアップを非表示
     }
 
 </script>
