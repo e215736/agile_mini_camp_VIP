@@ -7,11 +7,16 @@
 
 </div>
 
-<!-- ボタンを押すと、/templatesに飛ぶ -->
 <style>
     .btn,
     #start-button {
       font-size: 24px;
+    }
+
+    /* 新しいスタイルを追加 */
+    #timer-display {
+      font-size: 36px;
+      text-align: center;
     }
 </style>
   
@@ -20,72 +25,61 @@
   </form>
   
   <form id="timer-form" method="get">
-    <label for="minutes" style="font-size: 24px;">分:</label>
+    <label for="minutes" style="font-size: 24px;">設定時間:</label>
     <input type="number" id="minutes" name="minutes" min="0" max="60" value="0" style="font-size: 24px; width: 80px;">
+    <label for="minutes" style="font-size: 24px;">分:</label>
     
-    <label for="seconds" style="font-size: 24px;">秒:</label>
     <input type="number" id="seconds" name="seconds" min="0" max="59" value="10" style="font-size: 24px; width: 80px;">
+    <label for="seconds" style="font-size: 24px;">秒:</label>
+
+    <input type="button" id="start-button" value='やーーーーる！！ハッ（笑顔）'>
     
   </form>
   
-  <input type="button" id="start-button" value='やーーーーる！！ハッ（笑顔）'>
-  
 
-
-  <audio id="audio-element" src="/static/audio/SiriPower.mp3"></audio>
   
+  <audio id="audio-element" src="/static/audio/{{ audio_file }}"></audio>
+  
+  <div id="timer-display"></div>
+
   <script>
-  // タイマーの表示要素を取得する
-  const timer = document.querySelector("#timer-form");
-  
-  // スタートボタンを取得する
-  const startButton = document.querySelector("#start-button");
-  
-  // 音声要素を取得する
-  const audioElement = document.querySelector("#audio-element");
-  
-  // スタートボタンを押した時の処理
+  const timerDisplay = document.getElementById("timer-display"); // タイマーの表示要素を取得する
+
+  const startButton = document.getElementById("start-button"); // スタートボタンを取得する
+  const audioElement = document.getElementById("audio-element"); // 音声要素を取得する
+
   startButton.addEventListener("click", () => {
-    // スピンボックスから分と秒を取得する
-    const minutes = parseInt(document.querySelector("#minutes").value);
-    const seconds = parseInt(document.querySelector("#seconds").value);
-    
-    // 分と秒を秒数に変換する
+    const minutes = parseInt(document.getElementById("minutes").value);
+    const seconds = parseInt(document.getElementById("seconds").value);
+
     let totalSeconds = minutes * 60 + seconds;
-    
-    // カウントダウン関数を定義する
+
     function countdown() {
-      // 秒数から分と秒に戻す
       let minutes = Math.floor(totalSeconds / 60);
       let seconds = totalSeconds % 60;
-      
-      // 分と秒を2桁に揃える
+
       minutes = minutes.toString().padStart(2, "0");
       seconds = seconds.toString().padStart(2, "0");
-      
+
       // タイマーの表示を更新する
-      timer.innerHTML = `<p>${minutes}:${seconds}</p>`;
-      
-      // 秒数を減らす
+      timerDisplay.innerHTML = `<p>${minutes}:${seconds}</p>`;
+
       totalSeconds--;
-      
-      // 秒数が0以下になったら
+
       if (totalSeconds < 0) {
-        // カウントダウンを停止する
         clearInterval(intervalId);
-        // 音声ファイルを再生する
+        const audioFiles = ["SiriPower.mp3", "SiriYa.mp3", "SiriEnd4.mp3"];
+        const audioFile = audioFiles[Math.floor(Math.random() * audioFiles.length)];
+        audioElement.src = `/static/audio/${audioFile}`;
         audioElement.play();
       }
     }
-    
-    // カウントダウン関数を1秒ごとに実行する
+
     const intervalId = setInterval(countdown, 1000);
-    
-    // スタートボタンを無効化する
+
     startButton.disabled = true;
-    
   });
-  
-  </script>
+
+</script>
 
 {% endblock %}
