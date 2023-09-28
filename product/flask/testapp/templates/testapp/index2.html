@@ -2,9 +2,8 @@
 
 {% block content %}
 <div class="container">
-    <h1>  おい、俺の筋肉！！やるのかい！？</h1>
+    <h1> おい、俺の筋肉！！やるのかい！？</h1>
     <h1>やらないのかい！？どっちなんだい！？</h1>
-
 </div>
 
 <style>
@@ -20,11 +19,11 @@
     }
 </style>
   
-  <form action="/" method="get">
+<form action="/" method="get">
     <a href="/" class="btn btn-flat" role="button"><span>ホームに戻る!</span></a>
-  </form>
-  
-  <form id="timer-form" method="get">
+</form>
+
+<form id="timer-form" method="get">
     <label for="minutes" style="font-size: 24px;">設定時間:</label>
     <input type="number" id="minutes" name="minutes" min="0" max="60" value="0" style="font-size: 24px; width: 80px;">
     <label for="minutes" style="font-size: 24px;">分:</label>
@@ -33,52 +32,53 @@
     <label for="seconds" style="font-size: 24px;">秒:</label>
 
     <input type="button" id="start-button" value='やーーーーる！！ハッ（笑顔）'>
-    
-  </form>
-  
+</form>
 
-  
-  <audio id="audio-element" src="/static/audio/{{ audio_file }}"></audio>
-  
-  <div id="timer-display"></div>
+<audio id="audio-element" src="/static/audio/{{ audio_file }}"></audio>
+<div id="timer-display"></div>
 
-  <script>
-  const timerDisplay = document.getElementById("timer-display"); // タイマーの表示要素を取得する
+<script>
+    const timerDisplay = document.getElementById("timer-display");
+    const startButton = document.getElementById("start-button");
+    const audioElement = document.getElementById("audio-element");
+    let intervalId; // Variable to hold the interval ID
 
-  const startButton = document.getElementById("start-button"); // スタートボタンを取得する
-  const audioElement = document.getElementById("audio-element"); // 音声要素を取得する
+    startButton.addEventListener("click", () => {
+        const minutes = parseInt(document.getElementById("minutes").value);
+        const seconds = parseInt(document.getElementById("seconds").value);
+        let totalSeconds = minutes * 60 + seconds;
 
-  startButton.addEventListener("click", () => {
-    const minutes = parseInt(document.getElementById("minutes").value);
-    const seconds = parseInt(document.getElementById("seconds").value);
+        function countdown() {
+            let minutes = Math.floor(totalSeconds / 60);
+            let seconds = totalSeconds % 60;
 
-    let totalSeconds = minutes * 60 + seconds;
+            minutes = minutes.toString().padStart(2, "0");
+            seconds = seconds.toString().padStart(2, "0");
 
-    function countdown() {
-      let minutes = Math.floor(totalSeconds / 60);
-      let seconds = totalSeconds % 60;
+            timerDisplay.innerHTML = `<p>${minutes}:${seconds}</p>`;
 
-      minutes = minutes.toString().padStart(2, "0");
-      seconds = seconds.toString().padStart(2, "0");
+            totalSeconds--;
 
-      // タイマーの表示を更新する
-      timerDisplay.innerHTML = `<p>${minutes}:${seconds}</p>`;
+            if (totalSeconds < 0) {
+                clearInterval(intervalId);
+                const audioFiles = ["SiriPower.mp3", "SiriYa.mp3", "SiriEnd4.mp3"];
+                const audioFile = audioFiles[Math.floor(Math.random() * audioFiles.length)];
+                audioElement.src = `/static/audio/${audioFile}`;
+                audioElement.play();
+                startButton.disabled = false; // Re-enable the start button
+                resetTimerDisplay(); // Reset the timer display and input fields
+            }
+        }
 
-      totalSeconds--;
+        intervalId = setInterval(countdown, 1000);
+        startButton.disabled = true;
+    });
 
-      if (totalSeconds < 0) {
-        clearInterval(intervalId);
-        const audioFiles = ["SiriPower.mp3", "SiriYa.mp3", "SiriEnd4.mp3"];
-        const audioFile = audioFiles[Math.floor(Math.random() * audioFiles.length)];
-        audioElement.src = `/static/audio/${audioFile}`;
-        audioElement.play();
-      }
+    function resetTimerDisplay() {
+        document.getElementById("minutes").value = "0";
+        document.getElementById("seconds").value = "10";
+        timerDisplay.innerHTML = "";
     }
-
-    const intervalId = setInterval(countdown, 1000);
-
-    startButton.disabled = true;
-  });
 
 </script>
 
